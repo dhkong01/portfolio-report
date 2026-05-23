@@ -1,0 +1,28 @@
+name: Portfolio Daily Report
+
+on:
+  schedule:
+    - cron: '0 22 * * 1-5'   # UTC 22:00 = KST 07:00 (월~금)
+  workflow_dispatch:           # 수동 실행 가능
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: 의존성 설치
+        run: pip install yfinance requests
+
+      - name: 리포트 실행
+        run: python report.py
+        env:
+          KAKAO_REST_API_KEY:  ${{ secrets.KAKAO_REST_API_KEY }}
+          KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
